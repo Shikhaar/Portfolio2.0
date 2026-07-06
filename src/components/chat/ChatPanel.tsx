@@ -32,6 +32,25 @@ const RECRUITER_SUGGESTIONS = [
   { icon: <Code2 size={14} />, text: "Why should I hire you?" },
 ];
 
+function formatMessageContent(content: string, isUser: boolean) {
+  if (!content) return "";
+  const regex = /(\*\*.*?\*\*)/g;
+  const parts = content.split(regex);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong 
+          key={i} 
+          className={isUser ? "font-bold text-white" : "font-extrabold text-[var(--text)] dark:text-white"}
+        >
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
+
 export function ChatPanel() {
   const [open, setOpen] = useState(false);
   const [recruiterMode, setRecruiterMode] = useState(false);
@@ -243,7 +262,11 @@ export function ChatPanel() {
                           : "bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text)] rounded-bl-sm"
                       }`}
                     >
-                      {msg.content || (msg.role === "assistant" && <span className="opacity-50">...</span>)}
+                      {msg.content ? (
+                        formatMessageContent(msg.content, msg.role === "user")
+                      ) : (
+                        msg.role === "assistant" && <span className="opacity-50">...</span>
+                      )}
                     </div>
                   </div>
                 ))}
