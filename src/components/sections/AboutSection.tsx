@@ -50,13 +50,13 @@ export function AboutSection() {
           className="lg:col-span-7 space-y-5 text-[var(--text-secondary)] leading-relaxed text-base sm:text-lg"
         >
           <p>
-            I enjoy building **production AI systems** rather than research prototypes. My work sits at the intersection of **large language models**, **real-time voice AI**, **computer vision**, and the **backend infrastructure** that makes these systems reliable in production.
+            I enjoy building <strong className="font-semibold text-[var(--text)]">production AI systems</strong> rather than research prototypes. My work sits at the intersection of <strong className="font-semibold text-[var(--text)]">large language models</strong>, <strong className="font-semibold text-[var(--text)]">real-time voice AI</strong>, <strong className="font-semibold text-[var(--text)]">computer vision</strong>, and the <strong className="font-semibold text-[var(--text)]">backend infrastructure</strong> that makes these systems reliable in production.
           </p>
           <p>
-            I joined **Zypp Electric** as an early member of the AI team and have since built AI systems that support operations serving <strong>25,000+ active delivery riders</strong> across India.
+            I joined <strong className="font-semibold text-[var(--text)]">Zypp Electric</strong> as an early member of the AI team and have since built AI systems that support operations serving <strong>25,000+ active delivery riders</strong> across India.
           </p>
           <p>
-            To me, building an AI system is about much more than training a model. It needs to **handle edge cases gracefully**, fail safely, and remain reliable in real-world conditions. Whether it's a **voice assistant operating in noisy environments** or a **credit scoring engine** that needs to be consistent across different cities, I believe the engineering behind an AI system is just as important as the model itself.
+            To me, building an AI system is about much more than training a model. It needs to <strong className="font-semibold text-[var(--text)]">handle edge cases gracefully</strong>, fail safely, and remain reliable in real-world conditions. Whether it's a <strong className="font-semibold text-[var(--text)]">voice assistant operating in noisy environments</strong> or a <strong className="font-semibold text-[var(--text)]">credit scoring engine</strong> that needs to be consistent across different cities, I believe the engineering behind an AI system is just as important as the model itself.
           </p>
         </motion.div>
 
