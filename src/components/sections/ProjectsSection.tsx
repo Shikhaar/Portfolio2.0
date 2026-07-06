@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +28,8 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
   const [activeFilter, setActiveFilter] = useState<ProjectCategory>("All");
   const [search, setSearch] = useState("");
 
+  const [showAll, setShowAll] = useState(false);
+
   // Separate shipped production systems from concept/R&D projects
   const shippedProjects = projects.filter((p) => p.status !== "concept");
   const conceptProjects = projects.filter((p) => p.status === "concept");
@@ -41,6 +43,10 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
       p.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
+
+  // Limit display list initially when viewing all with no active search
+  const isDefaultView = activeFilter === "All" && !search;
+  const visibleProjects = isDefaultView && !showAll ? filtered.slice(0, 4) : filtered;
 
   return (
     <SectionWrapper id="projects" className="bg-[var(--surface)]/50">
@@ -61,7 +67,10 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveFilter(cat)}
+              onClick={() => {
+                setActiveFilter(cat);
+                setShowAll(false); // Reset showAll when switching categories
+              }}
               className={`px-4 py-2 text-sm font-medium rounded-xl border transition-all duration-150 ${
                 activeFilter === cat
                   ? "bg-[var(--primary)] border-[var(--primary)] text-white"
@@ -90,7 +99,7 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
         className="grid md:grid-cols-2 gap-6"
       >
         <AnimatePresence mode="popLayout">
-          {filtered.map((project) => (
+          {visibleProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </AnimatePresence>
@@ -104,6 +113,27 @@ export function ProjectsSection({ projects }: ProjectsSectionProps) {
           </motion.p>
         )}
       </motion.div>
+
+      {/* Show More / Show Less Toggle Button */}
+      {isDefaultView && filtered.length > 4 && (
+        <motion.div
+          variants={itemVariants}
+          className="flex justify-center mt-10"
+        >
+          <button
+            onClick={() => {
+              setShowAll(!showAll);
+              // If collapsing, scroll back to the top of the projects section smoothly
+              if (showAll) {
+                document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            className="flex items-center gap-2 px-6 py-3 border border-[var(--border)] hover:border-[var(--primary)] bg-[var(--surface)] text-sm font-semibold rounded-2xl text-[var(--text-secondary)] hover:text-[var(--primary)] transition-all cursor-pointer shadow-[var(--shadow-sm)] hover:scale-[1.02] active:scale-[0.98]"
+          >
+            {showAll ? "Show Less Projects" : `Show More Projects (${filtered.length - 4} more)`}
+          </button>
+        </motion.div>
+      )}
 
       {/* Concept / R&D Projects — shown only when no category filter active */}
       {activeFilter === "All" && !search && conceptProjects.length > 0 && (
