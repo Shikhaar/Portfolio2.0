@@ -24,8 +24,9 @@ export function ProjectCard({ project, isConcept = false }: ProjectCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96 }}
+      whileHover={{ y: -6, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl overflow-hidden hover:shadow-[var(--shadow-lg)] hover:border-[var(--primary)] transition-all duration-[var(--duration-slow)] group"
+      className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl overflow-hidden hover:shadow-[var(--shadow-xl)] hover:border-[var(--primary)] transition-[box-shadow,border-color] duration-[var(--duration-slow)] group"
     >
       {/* Header */}
       <div
@@ -71,28 +72,32 @@ export function ProjectCard({ project, isConcept = false }: ProjectCardProps) {
 
           <div className="flex items-center gap-2 flex-shrink-0 mt-1">
             {project.repoUrl && (
-              <a
+              <motion.a
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="p-1.5 rounded-lg bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all duration-[var(--duration-fast)]"
+                whileHover={{ rotate: 12, scale: 1.1 }}
+                transition={{ duration: 0.15 }}
+                className="p-1.5 rounded-lg bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors duration-[var(--duration-fast)] block"
                 title="View Source Code"
               >
                 <GithubIcon size={16} />
-              </a>
+              </motion.a>
             )}
             {project.demoUrl && (
-              <a
+              <motion.a
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="p-1.5 rounded-lg bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all duration-[var(--duration-fast)]"
+                whileHover={{ rotate: 45, scale: 1.1 }}
+                transition={{ duration: 0.15 }}
+                className="p-1.5 rounded-lg bg-[var(--surface-hover)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors duration-[var(--duration-fast)] block"
                 title="View Live Demo"
               >
                 <ExternalLink size={16} />
-              </a>
+              </motion.a>
             )}
             <motion.div
               animate={{ rotate: expanded ? 180 : 0 }}

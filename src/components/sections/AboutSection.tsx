@@ -21,6 +21,16 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as any } },
 };
 
+const slideLeft = {
+  hidden: { opacity: 0, x: -32 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as any } },
+};
+
+const slideRight = {
+  hidden: { opacity: 0, x: 32 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as any } },
+};
+
 export function AboutSection() {
   return (
     <SectionWrapper id="about">
@@ -36,7 +46,7 @@ export function AboutSection() {
       <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         {/* Left Side: Text Paragraphs */}
         <motion.div
-          variants={itemVariants}
+          variants={slideLeft}
           className="lg:col-span-7 space-y-5 text-[var(--text-secondary)] leading-relaxed text-base sm:text-lg"
         >
           <p>
@@ -52,7 +62,7 @@ export function AboutSection() {
 
         {/* Right Side: Focus Areas */}
         <motion.div
-          variants={containerVariants}
+          variants={slideRight}
           className="lg:col-span-5 space-y-4"
         >
           <motion.p variants={itemVariants} className="text-xs font-bold text-[var(--muted)] uppercase tracking-widest">

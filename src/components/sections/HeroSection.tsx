@@ -67,21 +67,36 @@ export function HeroSection({ siteConfig }: HeroSectionProps) {
               transition={{ duration: 0.4, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-wrap gap-3"
             >
-              <a
+              <motion.a
                 href="#projects"
-                className="px-6 py-3 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-semibold rounded-2xl transition-colors duration-150 text-sm"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                className="relative overflow-hidden px-6 py-3 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-semibold rounded-2xl text-sm inline-flex items-center gap-2"
               >
+                {/* shimmer sweep */}
+                <motion.span
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.22) 50%, transparent 60%)",
+                    backgroundSize: "200% 100%",
+                  }}
+                  initial={{ backgroundPosition: "200% 0" }}
+                  whileHover={{ backgroundPosition: "-200% 0" }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                />
                 View Projects
-              </a>
-              <button
+              </motion.a>
+              <motion.button
                 onClick={() => {
                   const event = new CustomEvent("open-chat");
                   window.dispatchEvent(event);
                 }}
-                className="px-6 py-3 bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] hover:scale-[1.02] active:scale-[0.98] text-[var(--text)] font-semibold rounded-2xl transition-all duration-[var(--duration-fast)] shadow-[var(--shadow-sm)] cursor-pointer"
+                whileHover={{ scale: 1.04, borderColor: "var(--primary)" }}
+                whileTap={{ scale: 0.97 }}
+                className="px-6 py-3 bg-[var(--surface)] border border-[var(--border)] hover:text-[var(--primary)] text-[var(--text)] font-semibold rounded-2xl transition-colors duration-[var(--duration-fast)] shadow-[var(--shadow-sm)] cursor-pointer text-sm"
               >
                 Ask me anything ✦
-              </button>
+              </motion.button>
             </motion.div>
 
           </div>

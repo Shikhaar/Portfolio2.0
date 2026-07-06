@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface SectionWrapperProps {
   id?: string;
@@ -9,24 +8,28 @@ interface SectionWrapperProps {
   className?: string;
 }
 
-export function SectionWrapper({ id, children, className = "" }: SectionWrapperProps) {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
+    },
+  },
+};
 
+export function SectionWrapper({ id, children, className = "" }: SectionWrapperProps) {
   return (
     <section
       id={id}
-      ref={ref}
       className={`py-20 sm:py-28 px-4 sm:px-6 lg:px-8 ${className}`}
     >
       <motion.div
         className="max-w-6xl mx-auto"
         initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        variants={{
-          hidden: {},
-          visible: { transition: { staggerChildren: 0.08 } },
-        }}
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
       >
         {children}
       </motion.div>

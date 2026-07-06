@@ -5,8 +5,12 @@ import { SectionWrapper } from "@/components/ui/SectionWrapper";
 import { Building2, Calendar, MapPin, Award, CheckCircle2 } from "lucide-react";
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as any } },
+  hidden: { opacity: 0, x: -28 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as any },
+  },
 };
 
 export function ExperienceSection() {

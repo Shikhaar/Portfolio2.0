@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { JsonLd } from "@/components/JsonLd";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import siteConfig from "../../content/site.json";
 
 const inter = Inter({
@@ -50,6 +51,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider>
+          <ScrollProgress />
           <JsonLd />
           {children}
           <CommandPalette />
