@@ -50,13 +50,13 @@ export function AboutSection() {
           className="lg:col-span-7 space-y-5 text-[var(--text-secondary)] leading-relaxed text-base sm:text-lg"
         >
           <p>
-            I enjoy building production AI systems rather than research prototypes. My work sits at the intersection of large language models, real-time voice AI, computer vision, and the backend infrastructure that makes these systems reliable in production.
+            I enjoy building **production AI systems** rather than research prototypes. My work sits at the intersection of **large language models**, **real-time voice AI**, **computer vision**, and the **backend infrastructure** that makes these systems reliable in production.
           </p>
           <p>
-            I joined Zypp Electric as an early member of the AI team and have since built AI systems that support operations serving <strong>25,000+ active delivery riders</strong> across India.
+            I joined **Zypp Electric** as an early member of the AI team and have since built AI systems that support operations serving <strong>25,000+ active delivery riders</strong> across India.
           </p>
           <p>
-            To me, building an AI system is about much more than training a model. It needs to handle edge cases gracefully, fail safely, and remain reliable in real-world conditions. Whether it's a voice assistant operating in noisy environments or a credit scoring engine that needs to be consistent across different cities, I believe the engineering behind an AI system is just as important as the model itself.
+            To me, building an AI system is about much more than training a model. It needs to **handle edge cases gracefully**, fail safely, and remain reliable in real-world conditions. Whether it's a **voice assistant operating in noisy environments** or a **credit scoring engine** that needs to be consistent across different cities, I believe the engineering behind an AI system is just as important as the model itself.
           </p>
         </motion.div>
 

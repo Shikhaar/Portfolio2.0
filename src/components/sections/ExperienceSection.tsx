@@ -95,7 +95,7 @@ export function ExperienceSection() {
             <div className="p-4 bg-[var(--surface-hover)] border border-[var(--border)]/50 rounded-2xl">
               <h5 className="text-xs font-bold text-[var(--text)] uppercase tracking-wider mb-2">Focus & System Impact</h5>
               <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                In my full-time engineering role, my focus shifted to <span className="font-semibold text-[var(--text)]">system design, throughput scaling, and cost containment</span>. I worked on reducing API latency over WebSockets, managing concurrent streaming token states, and building secure server-to-server connection layers.
+                In my full-time engineering role, my focus shifted to <span className="font-semibold text-[var(--text)]">system design, throughput scaling, and cost containment</span>. I worked on <span className="font-semibold text-[var(--text)]">reducing API latency over WebSockets</span>, managing concurrent streaming token states, and building secure server-to-server connection layers.
               </p>
             </div>
           </div>
@@ -140,28 +140,28 @@ export function ExperienceSection() {
                   <CheckCircle2 size={16} className="text-[var(--primary)] mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     <span className="font-semibold text-[var(--text)] block mb-0.5">Automated Damage Detection</span>
-                    Mastered vision parsing by building a <span className="font-semibold text-[var(--text)]">GPT-4o Vision</span> validation pipeline to analyze 4 vehicle sides in parallel for ride-ends.
+                    Mastered vision parsing by building a <span className="font-semibold text-[var(--text)]">GPT-4o Vision</span> validation pipeline to analyze <span className="font-semibold text-[var(--text)]">4 vehicle sides in parallel</span> for ride-ends.
                   </p>
                 </li>
                 <li className="flex gap-3">
                   <CheckCircle2 size={16} className="text-[var(--primary)] mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     <span className="font-semibold text-[var(--text)] block mb-0.5">Proprietary Scoring Systems</span>
-                    Engineered <span className="font-semibold text-[var(--text)]">Hustle Score (Zybil)</span>, mapping IoT telemetry, wallet records, and merchant stats into a 300-900 scale for gig worker credit.
+                    Engineered <span className="font-semibold text-[var(--text)]">Hustle Score (Zybil)</span>, mapping <span className="font-semibold text-[var(--text)]">EV IoT telemetry, wallet records, and merchant stats</span> into a <span className="font-semibold text-[var(--text)]">300-900 scale</span> for gig worker credit.
                   </p>
                 </li>
                 <li className="flex gap-3">
                   <CheckCircle2 size={16} className="text-[var(--primary)] mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     <span className="font-semibold text-[var(--text)] block mb-0.5">Demand Forecasting Pipelines</span>
-                    Implemented spare parts consumption forecasting across <span className="font-semibold text-[var(--text)]">15+ cities</span> using <span className="font-semibold text-[var(--text)]">Amazon Chronos-2</span> with statistical TSB/SBA fallbacks.
+                    Implemented spare parts consumption forecasting across <span className="font-semibold text-[var(--text)]">15+ cities</span> using <span className="font-semibold text-[var(--text)]">Amazon Chronos-2</span> with statistical <span className="font-semibold text-[var(--text)]">TSB/SBA fallbacks</span>.
                   </p>
                 </li>
                 <li className="flex gap-3">
                   <CheckCircle2 size={16} className="text-[var(--primary)] mt-0.5 flex-shrink-0" />
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     <span className="font-semibold text-[var(--text)] block mb-0.5">LLM Orchestration & RAG</span>
-                    Developed initial runs of the <span className="font-semibold text-[var(--text)]">Zia Chatbot</span>, utilizing <span className="font-semibold text-[var(--text)]">Qdrant Vector DB</span> context injections and low-latency NDJSON streaming.
+                    Developed initial runs of the <span className="font-semibold text-[var(--text)]">Zia Chatbot</span>, utilizing <span className="font-semibold text-[var(--text)]">Qdrant Vector DB</span> context injections and <span className="font-semibold text-[var(--text)]">low-latency NDJSON streaming</span>.
                   </p>
                 </li>
               </ul>
@@ -170,7 +170,7 @@ export function ExperienceSection() {
             <div className="p-4 bg-[var(--surface-hover)] border border-[var(--border)]/50 rounded-2xl">
               <h5 className="text-xs font-bold text-[var(--text)] uppercase tracking-wider mb-2">Engineering Focus & Growth</h5>
               <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                During this year-long internship, I transitioned from experimental models to shipping <span className="font-semibold text-[var(--text)]">production-grade AI pipelines</span> serving thousands of riders daily. I gained hands-on experience in managing <span className="font-semibold text-[var(--text)]">LLM pricing boundaries, system latency bottlenecks, asynchronous task workers</span>, and structuring strict validation checks to prevent data leaks. Converted to full-time AI/ML Engineer in July 2026 after shipping 5 production systems across voice AI, computer vision, credit scoring, forecasting, and LLM orchestration during the internship.
+                During this year-long internship, I transitioned from experimental models to shipping <span className="font-semibold text-[var(--text)]">production-grade AI pipelines</span> serving thousands of riders daily. I gained hands-on experience in managing <span className="font-semibold text-[var(--text)]">LLM pricing boundaries, system latency bottlenecks, asynchronous task workers</span>, and structuring strict validation checks to prevent data leaks. Converted to full-time AI/ML Engineer in July 2026 after shipping <span className="font-semibold text-[var(--text)]">5 production systems</span> across voice AI, computer vision, credit scoring, forecasting, and LLM orchestration during the internship.
               </p>
             </div>
 
