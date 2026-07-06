@@ -54,6 +54,7 @@ export function BackgroundKeywords() {
             ...POSITIONS[i % POSITIONS.length],
             opacity: 0,
             letterSpacing: "-0.02em",
+            willChange: "transform",
           }}
           animate={{
             y: [0, -6, 0],
