@@ -6,7 +6,7 @@ Live Site: [shikhar-portfolio-phi.vercel.app](https://shikhar-portfolio-phi.verc
 
 ---
 
-## 🚀 Shipped Production AI Systems (Zypp Electric)
+##  Shipped Production AI Systems (Zypp Electric)
 
 During my tenure at Zypp Electric (India's largest EV-first last-mile delivery platform), I built and shipped 8 core production AI systems serving **25,000+ active delivery riders** daily:
 
@@ -21,7 +21,7 @@ During my tenure at Zypp Electric (India's largest EV-first last-mile delivery p
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+##  Tech Stack & Architecture
 
 - **Backend & Core**: Python (Async), FastAPI, SQLAlchemy, MySQL, Docker, NGINX
 - **AI/ML & Audio**: Pipecat, LiveKit (WebRTC), OpenAI (Realtime, GPT-4o Vision), Amazon Chronos-2, MediaPipe, AWS Rekognition, Nvidia Nemotron-Parse
@@ -31,7 +31,7 @@ During my tenure at Zypp Electric (India's largest EV-first last-mile delivery p
 
 ---
 
-## 📦 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -70,6 +70,6 @@ During my tenure at Zypp Electric (India's largest EV-first last-mile delivery p
 
 ---
 
-## 🛡️ License
+##  License
 
 This project is licensed under the MIT License.
