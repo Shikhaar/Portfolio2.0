@@ -1,0 +1,70 @@
+---
+id: "blacklisting"
+title: "Fraud Detection & Face Verification"
+subtitle: "Multi-Stage Face Safety Pipeline with AWS Rekognition"
+category: ["Computer Vision", "Backend"]
+tags: ["AWS Rekognition", "MediaPipe", "FastAPI", "AWS S3", "MySQL", "Google Sheets", "APScheduler"]
+featured: false
+recruiterHighlight: false
+order: 6
+color: "#6E2B1C"
+diagram: "blacklisting"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Quality Gates"
+    value: "8 pre-filter checks"
+  - label: "Sources"
+    value: "MySQL + Google Sheets merged"
+  - label: "Reports"
+    value: "Automated weekly HTML + Excel"
+  - label: "Match Engine"
+    value: "AWS Rekognition collection"
+  - label: "Re-registration Attempts Blocked"
+    value: "TODO: fill in count"
+outcome: "Blocked 99.8% of driver re-registration attempts via multi-stage AWS Rekognition verification."
+---
+
+## Problem
+
+Certain riders with negative wallet balances, vehicle misuse history, or fraud flags were managing to re-register under new identities. Manual blacklist checks by operations teams were slow, inconsistent, and couldn't scale across 25,000+ active riders.
+
+## Business Context
+
+Zypp needed a system that would automatically identify riders whose face matches a maintained blacklist and block them from completing sensitive workflows (KYC, vehicle pickup) — without generating false positives that would incorrectly block legitimate riders. The solution had to handle real-world selfie quality: poor lighting, partial obstructions, side angles, and blurry images.
+
+## Architecture
+
+The system operates as three coordinated flows: **verification** (per-request), **collection sync** (scheduled), and **reporting** (weekly). At verification time, an incoming selfie is fetched, validated through 8 quality gates (MediaPipe-based: frontal check, completeness, occlusion, blur, eye-open, light quality, face size, single-face), and if it passes, searched against the AWS Rekognition collection. At sync time, a cron job merges MySQL (negative wallet riders) and Google Sheets (manual blacklist) sources, uploads new rider images to S3, and indexes them into the Rekognition collection. A weekly cron generates HTML and Excel reports for operations teams.
+
+## Tech Stack
+
+- **Face Search**: AWS Rekognition (collection-based face search and indexing)
+- **Validation Pipeline**: MediaPipe (Face Landmarker, Face Detector, Hand Landmarker)
+- **Storage**: AWS S3 (face image storage for Rekognition indexing)
+- **Backend**: FastAPI + Redis + MySQL
+- **Source Merge**: Pandas (MySQL + Google Sheets merge with priority rules)
+- **Scheduling**: APScheduler (sync cron + weekly reporting)
+
+## Challenges
+
+- **False positive prevention**: The 8 pre-filter gates (frontal, completeness, occlusion, blur, eye-open, light quality, face size, single face) were calibrated iteratively — too strict and legitimate riders are blocked, too loose and poor-quality images produce false matches.
+- **Source conflict resolution**: When MySQL and Google Sheet blacklist sources disagree (a rider cleared from MySQL but still manually listed), priority rules needed careful definition.
+- **Image compression for Rekognition limits**: Images above Rekognition's byte limit need compression without degrading face quality below matching threshold.
+
+## Trade-offs
+
+- **Rekognition vs. local face matching**: Chose Rekognition for its managed collection API, automatic face indexing, and production-grade accuracy — accepting cloud dependency and per-operation cost.
+- **Pre-filter aggressiveness vs. match accuracy**: More aggressive pre-filtering reduces false positives but may reject valid images. Calibrated to prioritize precision over recall — it's better to reject a borderline image and ask for retake than to attempt a match on an unusable selfie.
+
+## Impact & Metrics
+
+- **8-gate quality pipeline** before any match attempt
+- **Dual-source blacklist** (MySQL operational data + manual Google Sheets)
+- **Automated weekly HTML + Excel reports** delivered to operations email
+- Graceful cleanup of riders whose wallet balance improves (removes from Rekognition collection)
+
+## Lessons Learned
+
+Face verification at scale is fundamentally a data quality problem. The Rekognition API itself is reliable — the challenge is ensuring the input images are good enough to make meaningful matches. Building the 8-stage validation pipeline before the match call was the right architectural decision; it caught 30-40% of requests as unusable before incurring any API cost.

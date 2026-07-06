@@ -1,0 +1,70 @@
+---
+id: "ai-factory"
+title: "AI Factory"
+subtitle: "Autonomous AI Engineering Organization as a Service (Idea)"
+category: ["LLMs", "Backend"]
+tags: ["FastAPI", "Poetry", "SQLAlchemy", "LiteLLM", "Qdrant", "React", "React Flow", "Monaco Editor"]
+featured: true
+recruiterHighlight: true
+order: 9
+color: "#4A3B32"
+diagram: "ai-factory"
+status: "concept"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Agent Orchestration"
+    value: "DAG-based WorkflowManager"
+  - label: "LLM Loop Safety"
+    value: "Token budget circuit breaker"
+  - label: "Drift Verification"
+    value: "2-Layer Strategy Drift Checks"
+  - label: "Integrations"
+    value: "n8n Tool Bridge Support"
+outcome: "Conceptualized modular agent pipeline to orchestrate multi-agent microservices."
+---
+
+## Problem
+
+Conversational multi-agent loops often fail in production because they lack constraints. Without structure, agents hallucinate plans, deviate from strategic objectives (drift), enter expensive infinite loops, and fail to handle tool exceptions or include human supervision gracefully.
+
+## Business Context
+
+For organizations needing software engineering at scale, a traditional conversational chatbot is not enough. The AI Factory (also known as *Idea*) acts as an autonomous engineering service. It guarantees that any user prompt is structured into a deterministic, hierarchical plan where agents execute tasks under strict governance, preventing budget runaways and strategic drift.
+
+## Architecture
+
+The system behaves like a structured operating system for AI workers, divided into decoupled layers:
+- **Orchestration Layer (`WorkflowManager`)**: Generates a Directed Acyclic Graph (DAG) for step execution and freezes a snapshot of settings (`plan_snapshot`) to prevent configuration drift.
+- **Runtime Layer (`AgentExecutor`)**: Controls the ReAct loop (LLM ➔ Tool Call ➔ Result ➔ LLM) with a 80% soft warning limit and a 100% hard circuit breaker to prevent infinite loops.
+- **Governance Engine**: Evaluates strategy drift (using fast heuristics and strategic LLM evaluation), triggers fallback workarounds for tool failures, and pauses for Human-in-the-loop (HITL) input via database states.
+- **Frontend Panel**: Features a glassmorphism Visual Studio dashboard, interactive workflow execution visualization with React Flow, and Monaco Editor for file streaming.
+
+## Tech Stack
+
+- **Backend**: Python 3.11+, Poetry, FastAPI (WebSockets + REST), SQLAlchemy, Alembic
+- **LLM Interface**: LiteLLM (unified provider integration) + Instructor (strict Pydantic schema validation)
+- **Vector DB**: Qdrant (for long-term agent memory RAG)
+- **Observability**: Weights & Biases (Weave tracing) + local files logging
+- **Frontend**: React, Custom CSS (glassmorphism), React Flow, Monaco Editor
+
+## Challenges
+
+- **Preventing Infinite Loops**: Multi-agent setups can query LLMs continuously. Solved by implementing soft warnings and hard circuit breakers on token and turn budgets inside the `AgentExecutor`.
+- **Strategy Drift**: Agents can drift from original plan objectives. Neutralized by running a 2-stage verification checking if the current output satisfies original plan requirements.
+- **HITL Integration**: Suspending agent runs for human feedback without blocking threads. Managed by storing workflow step runs in the database with a suspended state and resuming via Webhook / REST trigger.
+
+## Trade-offs
+
+- **Immutable plan snapshots vs. dynamic adjustments**: Snapshots prevent drift but eliminate the ability to dynamically steer agents mid-run. We accepted this trade-off for reliability, but allow manual workflow retries from specific step indices.
+- **LiteLLM vs. native SDKs**: LiteLLM simplifies provider routing but adds overhead and delays access to model-specific features. Acceptable to ensure quick fallbacks between OpenAI, Anthropic, and Gemini models.
+
+## Impact & Metrics
+
+- **Zero-runaway-cost guarantee**: Token budget circuit breaker successfully terminates runaway loops before they exceed budgets.
+- **Immutable workflow execution**: 100% consistent runs via plan snapshots.
+- **n8n bridge**: Integrations automatically registered as native agent tools.
+
+## Lessons Learned
+
+Hierarchical roles and contract-first approaches are much more effective for autonomous coding than free-form agent conversations. Defining strict input/output Pydantic contracts between steps minimizes agent communication errors, and keeping human supervision in the loop via clear state machines is crucial for shipping real code.

@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────
+   SEMANTIC DESIGN TOKENS
+   ───────────────────────────────────────────────────────── */
+:root {
+  /* Core palette */
+  --primary: #e7473c;
+  --primary-hover: #d33d32;
+  --primary-muted: rgba(231, 71, 60, 0.12);
+
+  /* Light theme surfaces */
+  --background: #f0f0f0;
+  --surface: #ffffff;
+  --surface-hover: #f9f9f9;
+  --surface-elevated: #ffffff;
+  --border: #e2e8f0;
+  --border-muted: #f1f5f9;
+
+  /* Light theme text */
+  --text: #1a1a1a;
+  --text-secondary: #4b5563;
+  --muted: #71717a;
+
+  /* State colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.06);
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --background: #0b0b0b;
+  --surface: #161616;
+  --surface-hover: #1e1e1e;
+  --surface-elevated: #1e1e1e;
+  --border: #262626;
+  --border-muted: #1e1e1e;
+
+  --text: #f3f3f3;
+  --text-secondary: #d1d5db;
+  --muted: #a1a1aa;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5), 0 4px 8px rgba(0,0,0,0.3);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.6), 0 8px 16px rgba(0,0,0,0.4);
+}
+
+/* ─────────────────────────────────────────────────────────
+   TAILWIND THEME MAPPING
+   ───────────────────────────────────────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
+
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+}
+
+/* ─────────────────────────────────────────────────────────
+   BASE STYLES
+   ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.6;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  transition: background-color var(--duration-slow) var(--ease-in-out),
+              color var(--duration-slow) var(--ease-in-out);
+}
+
+/* ─────────────────────────────────────────────────────────
+   NOISE TEXTURE OVERLAY
+   ───────────────────────────────────────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ─────────────────────────────────────────────────────────
+   TYPOGRAPHY SCALE
+   ───────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+/* ─────────────────────────────────────────────────────────
+   REDUCED MOTION
+   ───────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   CUSTOM SCROLLBAR
+   ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ─────────────────────────────────────────────────────────
+   FOCUS STYLES (Accessibility)
+   ───────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────
+   SELECTION
+   ───────────────────────────────────────────────────────── */
+::selection {
+  background: var(--primary-muted);
+  color: var(--text);
+}
+
+/* ─────────────────────────────────────────────────────────
+   UTILITIES
+   ───────────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, #c0392b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.dark .glass {
+  background: rgba(22,22,22,0.7);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.hover-lift {
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Shikhar Srivastava",
+  "title": "AI/ML Engineer",
+  "tagline": "Building production AI systems",
+  "description": "AI/ML Engineer specializing in production-grade agentic AI, voice pipelines, computer vision, time-series forecasting, and backend systems in production.",
+  "location": "Gurgaon, India",
+  "available": false,
+  "availabilityNote": "Available for collaborations",
+  "email": "shikharsrivastava3004@gmail.com",
+  "calLink": "",
+  "resumeUrl": "/resume.pdf",
+  "seo": {
+    "siteName": "Shikhar Srivastava — AI/ML Engineer",
+    "defaultTitle": "Shikhar Srivastava | AI/ML Engineer",
+    "defaultDescription": "AI/ML Engineer building production AI systems — voice pipelines, computer vision, agentic AI, and ML for real-world production.",
+    "ogImage": "/og-image.png",
+    "twitterHandle": ""
+  }
+}

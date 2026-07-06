@@ -1,0 +1,70 @@
+---
+id: "movie-recommendator"
+title: "Movie Recommendator"
+subtitle: "Content-Based Recommendation System with Real-Time API Fetching"
+category: ["Backend"]
+tags: ["Streamlit", "Pandas", "NumPy", "Scikit-Learn", "NLP", "TMDb API", "Pickle", "Python"]
+featured: false
+recruiterHighlight: false
+order: 10
+color: "#1F3A52"
+diagram: "movie-recommendator"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Dataset Size"
+    value: "~5,000 films"
+  - label: "Algorithm"
+    value: "Cosine Similarity on Vectorized Tags"
+  - label: "API Integrations"
+    value: "TMDb HTTP Request (Posters)"
+  - label: "UI Response Time"
+    value: "Sub-50ms (Local)"
+  - label: "User Engagement Rate"
+    value: "TODO: fill in % click-through rate"
+outcome: "Built content-based engine recommending items in under 50ms locally."
+---
+
+## Problem
+
+Finding relevant movies to watch in massive streaming catalogs is a friction point for users. Recommendation systems must compute similarity scores accurately across large datasets and render results with visual metadata (like movie posters) quickly, without needing heavy database operations.
+
+## Business Context
+
+MOVIERecommendator is designed as a lightweight, content-based recommendation tool. By calculating content similarity vectors offline and loading them as serialized objects online, it minimizes server footprint and delivers extremely fast recommendation grids to users in a web interface, augmented with real-time movie poster visuals.
+
+## Architecture
+
+The application is structured into two main phases:
+- **Offline Data Pipeline**: Merges datasets, parses JSON fields (genres, cast, keywords, director), combines them into a single `tags` text block, tokenizes and stems the words (using `PorterStemmer`), computes a Cosine Similarity matrix ($4806 \times 4806$ dimensions), and serializes them as pickled data files (`movie_dict.pkl` and `similarity.pkl`).
+- **Online Streamlit Interface (`app.py`)**: Loads pickles, retrieves similarity scores for the user-selected movie, sorts them descending to extract the top 5 matches, makes real-time HTTP requests to TMDb API for fetching poster URLs, and renders the titles and posters in a responsive grid.
+
+## Tech Stack
+
+- **Core Engine**: Python, Streamlit (v1.42.2)
+- **Data Engineering**: Pandas (v2.2.3), NumPy (v2.2.1)
+- **Machine Learning & NLP**: Scikit-Learn (v1.6.0) for `CountVectorizer` and cosine similarity, NLTK `PorterStemmer`
+- **APIs & Serialization**: Requests (v2.32.3), Pickle
+- **Hosting configs**:Procfile, setup.sh
+
+## Challenges
+
+- **Real-world text variety**: Movie summaries, genres, and cast names contain whitespace that could cause tag collisions (e.g., distinguishing "Johnny Depp" from "Johnny" or "Depp"). Solved by removing spaces from parsed tags (e.g., mapping to `"JohnnyDepp"`).
+- **Text Stemming**: Different grammatical versions of the same word (e.g., "loving", "loved", "love") inflate vector dimensions. Resolved by applying `PorterStemmer` token filtering.
+- **External API Rate Limits & Network Lag**: Real-time TMDb calls can block UI rendering or throw timeout exceptions. Mitigated by wrapping API calls in robust try-except blocks that fall back to static local placeholder graphics if the TMDb call fails.
+
+## Trade-offs
+
+- **Content-based vs. Collaborative filtering**: Content-based recommendation requires no historical user ratings data to operate (avoiding the cold start problem) but cannot recommend items outside the tag descriptions.
+- **Local Pickle Serialization vs. Database Queries**: Storing the $4806 \times 4806$ matrix in memory via a `similarity.pkl` file (approx. 185 MB) allows sub-50ms lookup times without database queries, but scales poorly to datasets larger than 10,000+ films due to memory consumption.
+
+## Impact & Metrics
+
+- **Sub-50ms recommendation times** achieved via memory-loaded similarity vectors.
+- **Cold-start problem eliminated** entirely by using content similarity tags.
+- **Real-time TMDb API fetching** with resilient error fallbacks.
+
+## Lessons Learned
+
+NLP preprocessing and text cleaning are the most critical steps in content-based recommendations. Simply cleaning spaces from multi-word tags (e.g. director/cast names) and stemming roots significantly reduces cosine vector dimensions and improves accuracy by preventing unrelated tag overlaps.

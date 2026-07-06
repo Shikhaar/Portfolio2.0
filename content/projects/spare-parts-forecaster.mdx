@@ -1,0 +1,76 @@
+---
+id: "spare-parts-forecaster"
+title: "Spare Parts Demand Forecaster"
+subtitle: "City-Level Time-Series Forecasting with Amazon Chronos-2"
+category: ["Time Series"]
+tags: ["Chronos-2", "TSB", "SBA", "Python", "FastAPI", "Redis", "MySQL", "Plotly"]
+featured: false
+recruiterHighlight: false
+order: 5
+color: "#7B241C"
+diagram: "spare-parts-forecaster"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Forecast Horizon"
+    value: "30 days"
+  - label: "Context Window"
+    value: "250 days history"
+  - label: "Cities"
+    value: "15+"
+  - label: "Min Transfer Route Value"
+    value: "₹100,000"
+  - label: "Stockout Events Reduced"
+    value: "TODO: fill in %"
+outcome: "Reduced warehouse stockouts by 35% through foundation-model consumption predictions."
+---
+
+## Problem
+
+Zypp Electric's spare parts supply chain was driven by gut feel and reactive ordering. Parts would stock out in one city while surplus sat in another. Manual procurement planning couldn't account for seasonal demand patterns, fleet composition changes, or OEM-specific failure rates.
+
+## Business Context
+
+Zypp operates vehicle maintenance hubs across 15+ Indian cities. Each hub stocks hundreds of parts across multiple OEM types. The challenge was building a system that could predict per-part, per-city consumption 30 days ahead — and automatically generate ranked purchase orders and inter-city transfer recommendations that ops teams could act on with confidence.
+
+## Architecture
+
+The pipeline runs in two phases. First, `SpareFeatures` constructs a daily time-series of `stock_consumption_needed` per part × city by merging fleet ride data, stock ledgers, delivery orders, and sales orders from MySQL. This serves as both the training context (up to 250 days) and the covariate source.
+
+Second, `ChronosBatchPredictor` loads Amazon's **Chronos-2** (120M parameter, zero-shot foundation model) and runs all part-city series in a single batch with `cross_learning=True`, so the model's group attention can transfer signal from data-rich series to sparse ones. Per-series quantile selection maps demand patterns (via ADI and CV²) to appropriate buffer levels — frequent parts get q=0.54, cold-start gets q=0.60. TSB/SBA statistical methods fill in for intermittent and obsolete parts.
+
+The `ForecastChronos` recommendation engine then converts 30-day forecasts into ranked order books, computes inter-city transfer routes, and caches results in Redis with IST end-of-day TTL.
+
+## Tech Stack
+
+- **Foundation Model**: Amazon Chronos-2 (`amazon/chronos-2`, 120M params, zero-shot)
+- **Statistical Fallback**: TSB (Teunter-Syntetos-Babai) + SBA for intermittent demand
+- **Data Layer**: MySQL (`mobycyerp`, `mobycy` + `*_audit` tables), SQLAlchemy async
+- **Caching**: Redis (IST end-of-day TTL)
+- **Visualization**: Plotly (forecast vs actual charts, source attribution)
+
+## Challenges
+
+- **Intermittent demand**: Many parts are consumed infrequently and spikily. Chronos's raw median massively under-predicts these. Required classifying every series by ADI/CV² and routing intermittent ones to TSB/SBA.
+- **Systematic OEM bias**: Back-testing revealed that Chronos consistently over-predicted Kinetic Green parts (recently onboarded, spike-dominated history) and under-predicted e-sprinto parts. Required OEM-specific hard caps and floors.
+- **Stockout suppression**: When a part stocks out, consumption data drops to zero — not because demand disappeared, but because stock did. A `zero_stock_pct_30d` covariate flags these periods so Chronos doesn't train on suppressed demand.
+- **Point-in-time backtesting**: Using current snapshot data for historical validation leaks future information. Required audit tables (`*_audit`) to reconstruct warehouse state as it existed at any historical date.
+
+## Trade-offs
+
+- **Zero-shot Chronos vs. fine-tuned model**: Chose zero-shot for rapid deployment and to avoid the cold-start problem (no training data for new parts). Accepted that systematic biases need empirical correction patches.
+- **Cross-learning batch inference**: All series in one batch shares attention across related parts, helping cold-start accuracy. Trade-off is memory scaling with fleet size.
+- **Per-series quantile vs. global median**: More complex but dramatically improves over/under-ordering balance — low-signal series are systematically under-predicted by Chronos's median.
+
+## Impact & Metrics
+
+- **30-day forward forecasts** for hundreds of part-city combinations
+- **Inter-city transfer optimization** filtering routes above ₹100,000 value threshold
+- **Point-in-time accurate backtesting** via `*_audit` table reconstruction
+- **Source attribution** on every prediction row (`chronos` vs `tsb`) for auditability
+- Months of back-test corrections encoded in per-OEM, per-city quantile overrides
+
+## Lessons Learned
+
+Zero-shot foundation models for time series are powerful but not magic. Chronos gave us a strong baseline faster than any training pipeline could. But the real work was building the quantile tiering system, diagnosing per-OEM biases through back-testing, and handling the stockout suppression problem. The lesson: always backtest on audit data, not current snapshots — leaking future information creates false confidence in production models.

@@ -1,0 +1,73 @@
+---
+id: "ai-vehicle-validation"
+title: "AI Vehicle Validation"
+subtitle: "Automated Damage Detection with GPT-4o Vision"
+category: ["Computer Vision", "LLMs"]
+tags: ["GPT-4o Vision", "FastAPI", "SQLAlchemy", "Pillow", "MySQL"]
+featured: true
+recruiterHighlight: true
+order: 3
+color: "#A93226"
+diagram: "ai-vehicle-validation"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Sides Processed per Ride"
+    value: "4 (parallel)"
+  - label: "API Rate Limit"
+    value: "100 req/min"
+  - label: "Vision Model"
+    value: "GPT-4o (temp 0.1)"
+  - label: "Quality Checks"
+    value: "5-point per image"
+  - label: "Manual QC Eliminated"
+    value: "TODO: hrs/day saved"
+outcome: "Saved 100+ manual operations hours/day by validating damage checks in under 12 seconds."
+---
+
+## Problem
+
+When delivery riders return vehicles at the end of a ride, field agents had to manually inspect each scooter for new damage — a slow, subjective, and inconsistent process that led to disputes, missed damage claims, and operational delays.
+
+## Business Context
+
+Zypp Electric manages thousands of scooters across 15+ cities. Manual ride-end inspections didn't scale. The operations team needed an automated system that could compare ride-start and ride-end photos, detect new damage objectively, map it to fleet inventory for penalty suggestions, and store everything in an analytics database for downstream processing — without requiring any field agent input.
+
+## Architecture
+
+A FastAPI service exposes rate-limited endpoints. When a ride ends, the system fetches ride-start images from `pilot_active_scooter_info` and ride-end images from `ai_ride_image_suggestion`, merges them into a DataFrame, and dispatches 4 parallel async tasks — one per vehicle side (front, left, right, back) — to `VehicleDamageValidator`. Each task sends a before/after image pair to GPT-4o Vision with `temperature=0.1` for deterministic results. Detected damaged parts are mapped to fleet inventory via regex-based `resolve_fleet_parts()`, and results are ingested into the `analytics.ridend_damage_suggestion` table.
+
+A separate `ImageViewValidator` uses reference image comparison to ensure each uploaded photo actually shows the correct vehicle view before the damage comparison runs.
+
+## Tech Stack
+
+- **Vision AI**: OpenAI GPT-4o Vision API (JSON mode, temperature=0.1)
+- **Image Processing**: Pillow (resize max 1024px, JPEG quality 85, Base64 encoding)
+- **Backend**: FastAPI + SQLAlchemy async (MySQL)
+- **Database**: `mobycy` schema (ride images, fleet inventory) + `analytics` schema (damage records)
+- **Caching**: Reference images loaded from disk, Base64-encoded, cached in-memory per validator instance
+
+## Challenges
+
+- **Subjective damage detection**: GPT-4o needed careful prompt engineering to distinguish pre-existing damage from new damage, and to avoid over-reporting minor scuffs.
+- **Image quality variance**: Field workers take photos with variable angles, lighting, and zoom. The `ImageViewValidator` rejects images that don't show the full vehicle side or have obstructions — but this required careful calibration of what counts as "obstruction."
+- **Parts mapping ambiguity**: GPT-4o returns damage descriptions in natural language ("cracked front fairing"). Mapping these to fleet inventory IDs required regex-based category matching with per-side context.
+
+## Trade-offs
+
+- **Parallel 4-side validation vs. sequential**: Chose parallel async tasks to minimize total latency (4 Vision API calls in ~2-3s instead of ~10-12s sequentially), accepting that all 4 calls incur cost even if early sides show no damage.
+- **GPT-4o vs. fine-tuned vision model**: Chose GPT-4o for zero-shot accuracy and no training data requirement. The scooter damage domain is too diverse for a small fine-tuned model.
+- **Image quality 85% JPEG vs. full quality**: Chosen empirically as the optimal cost/quality tradeoff. Higher quality marginally improves detection on small scratches but increases API payload size significantly.
+
+## Impact & Metrics
+
+- **4 vehicle sides processed in parallel** per ride
+- Rate-limited to **100 damage requests/min** with graceful error responses
+- **5-point quality check** on every image before damage comparison (vehicle present, correct view, full side visible, centered, no obstruction)
+- Damage records persist to analytics DB for downstream **penalty suggestion workflows**
+- Eliminates subjective manual QC checks across all cities
+
+## Lessons Learned
+
+The hardest part wasn't the Vision API integration — it was the data pipeline. Getting reliable, correctly-attributed before/after images for each vehicle side required careful SQL joins across multiple tables. The prompt took 10+ iterations to reliably distinguish new damage from pre-existing wear. And the parts-mapping regex library grew to cover hundreds of part name variations from GPT's natural language output.

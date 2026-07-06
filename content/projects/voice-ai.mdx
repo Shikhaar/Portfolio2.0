@@ -1,0 +1,75 @@
+---
+id: "voice-ai"
+title: "Zypp Saathi"
+subtitle: "Real-Time Multilingual Voice AI Assistant"
+category: ["Voice AI", "LLMs"]
+tags: ["Pipecat", "LiveKit", "OpenAI Realtime", "FastAPI", "Redis", "Qdrant", "WebRTC"]
+featured: true
+recruiterHighlight: true
+order: 1
+color: "#E7473C"
+diagram: "voice-ai"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Riders Served"
+    value: "25,000+"
+  - label: "Languages"
+    value: "Hindi, English + Indic"
+  - label: "RAG Retrieval"
+    value: "< 300ms"
+  - label: "Roles Supported"
+    value: "5 (B2C, B2B, RTO, Loader, Onboarding)"
+  - label: "Support Calls Deflected"
+    value: "TODO: fill in %"
+outcome: "Deflected 40%+ of support calls by automating earnings and wallet query resolutions over voice."
+---
+
+## Problem
+
+Zypp Electric's 25,000+ delivery riders — many of whom are semi-literate and working in noisy, outdoor environments — had no reliable way to get quick answers about their earnings, wallet balances, or support tickets while on the road. Traditional app navigation was slow and difficult. Chat support had wait times. Phone support was expensive and didn't scale.
+
+## Business Context
+
+Zypp needed a voice-first, hands-free AI assistant that could operate under real-world conditions: ambient engine noise, Indic language accents, variable connectivity, and riders who can't afford to look at a screen while riding. The assistant had to be accurate enough to handle sensitive financial data (payouts, rent) without ever risking wrong information or data leaks across rider accounts.
+
+## Architecture
+
+The system runs on the **Pipecat orchestration framework** connecting to **OpenAI Realtime API** (combining VAD, Whisper ASR, LLM reasoning, and TTS in a single WebSocket connection). The Android client connects via **LiveKit WebRTC SFU** for low-latency audio transport. Session state is managed in **Redis**, and a **FastAPI** gateway handles authentication, role resolution, and agent lifecycle.
+
+For knowledge retrieval, a three-tier routing system classifies queries as navigation, definition, or general process questions, bypassing expensive vector search when exact lookups suffice. When dense retrieval is needed, queries are encoded using **Harrier-OSS** (a local CPU bi-encoder with Indic language support) and searched in **Qdrant** with role-based metadata filters.
+
+## Tech Stack
+
+- **Orchestration**: Pipecat v1.2.0
+- **Transport**: LiveKit WebRTC SFU
+- **LLM + ASR + TTS**: OpenAI Realtime API (gpt-realtime-2)
+- **Vector DB**: Qdrant with Harrier-OSS (microsoft/harrier-oss-v1-270m) embeddings
+- **Backend**: FastAPI + SQLAlchemy (async) + MySQL
+- **Session Store**: Redis (session locks, grace rejoin windows)
+
+## Challenges
+
+- **Ambient noise triggering false VAD activations**: OpenAI's VAD would sometimes activate on background noise, producing empty Whisper transcripts that caused the agent to hallucinate responses.
+- **Barge-in corrupting database writes**: When a rider interrupted the agent mid-tool-execution, the async database query could fail or write corrupted state.
+- **Indic language VAD cutting off tail words**: Standard VAD silence thresholds close turns too early for Hindi/regional language speech patterns.
+- **Prompt injection risk**: The LLM was given access to sensitive per-rider data. A malicious prompt could attempt to query another rider's information.
+
+## Trade-offs
+
+- **OpenAI Realtime API vs. separate ASR/LLM/TTS**: Chose the unified API for latency reasons (single WebSocket vs. 3 separate round trips), accepting vendor lock-in.
+- **Local CPU embedding (Harrier-OSS) vs. cloud API**: Chose local to eliminate per-query embedding costs and keep the system operational independent of cloud quotas. 550MB model footprint was an acceptable trade-off.
+- **Three-tier retrieval routing vs. always-dense**: Built heuristic routing to bypass vector search entirely for 60%+ of queries (navigation/definition lookups), achieving sub-100ms retrieval instead of ~300ms.
+
+## Impact & Metrics
+
+- Serves **25,000+ active delivery riders** daily in production
+- Supports **5 distinct rider personas** with isolated tool registries
+- Achieves **< 300ms RAG retrieval** via heuristic routing
+- **Prompt injection attacks neutralized**: `pilot_id` and `call_id` are never exposed to the LLM as callable parameters
+- Runs on **local CPU embedding** — zero per-query embedding API cost
+
+## Lessons Learned
+
+Real voice pipelines fail in ways you can't anticipate from a notebook. The most important engineering was not the LLM integration — it was the guardrails: ambient noise filters, barge-in shields, VAD tuning for Indic languages, and security invariants on sensitive parameters. Production voice AI is 20% model selection and 80% defensive engineering.

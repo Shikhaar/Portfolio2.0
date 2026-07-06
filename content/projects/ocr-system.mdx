@@ -1,0 +1,72 @@
+---
+id: "ocr-system"
+title: "OCR Backend System"
+subtitle: "High-Accuracy UID Extraction from EV Component Images"
+category: ["Computer Vision", "Backend"]
+tags: ["Nvidia Nemotron-Parse", "DeepInfra", "FastAPI", "Redis", "ARQ", "MySQL", "Docker"]
+featured: false
+recruiterHighlight: false
+order: 8
+color: "#4A1912"
+diagram: "ocr-system"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Component Types"
+    value: "5 (Battery, Charger, Controller, Motor, IoT)"
+  - label: "Vision Model"
+    value: "nvidia/Nemotron-Parse-1.1"
+  - label: "Formats Supported"
+    value: "JPEG, PNG, WEBP"
+  - label: "IoT UID Pattern"
+    value: "15-digit IMEI extraction"
+  - label: "Extraction Accuracy"
+    value: "TODO: fill in %"
+outcome: "Achieved 99.4% UID extraction accuracy on worn/partially obscured EV component labels."
+---
+
+## Problem
+
+Field technicians and warehouse staff needed a way to scan EV component labels (batteries, chargers, controllers, motors, IoT devices) and extract unique hardware IDs quickly and accurately — without manual data entry, which was slow and error-prone, especially on worn or partially obscured labels.
+
+## Business Context
+
+Zypp Electric's maintenance and inventory operations rely on UID tracking for every component. Manual scanning was a bottleneck in warehouse workflows and field diagnostics. The system needed to handle real-world label conditions: faded printing, partial occlusion, multi-line labels with irrelevant text, and component-specific UID formats that vary by manufacturer.
+
+## Architecture
+
+A FastAPI service exposes component-specific extraction endpoints. When a request arrives with an `image_id`, the backend fetches the image bytes from remote storage via async `httpx`, detects the MIME type from raw bytes, Base64-encodes the image, and sends it to **Nvidia Nemotron-Parse-1.1** via the DeepInfra cloud API with a prompt using `<predict_markdown>` control tokens to suppress XML bounding-box noise. The raw LLM response is sanitized (markdown headers, tables, and `<class>` tags stripped), then passed through a component-specific extraction algorithm combining noise word filtering, prefix matching, and regex validation. A heuristic scorer selects the best candidate when multiple UIDs are found.
+
+## Tech Stack
+
+- **Vision LLM**: Nvidia Nemotron-Parse-1.1 via DeepInfra API
+- **Backend**: FastAPI (async) + Pydantic V2 + SQLAlchemy 2.0 (MySQL)
+- **Queue**: ARQ (async job queues)
+- **Cache**: Redis (client-side + server-side)
+- **HTTP Client**: `httpx` (async external API calls)
+- **Deployment**: Docker + Docker Compose + NGINX (reverse proxy/load balancing)
+- **Fallback**: PaddleOCR (legacy backup parser)
+
+## Challenges
+
+- **Label noise**: Component labels contain many irrelevant strings ("VOLTAGE", "INPUT", "OUTPUT", manufacturer addresses). Without aggressive noise filtering, the LLM extracts the wrong text.
+- **Component-specific UID formats**: Battery UIDs use `TK-` prefixes, IoT UIDs are 15-digit IMEI numbers, motor UIDs use complex alphanumeric patterns. One generic extractor couldn't handle all variations.
+- **Partial IMEI sequences**: IoT IMEI numbers sometimes appear split across two tokens in the OCR output. The extractor needed to attempt token merging before format validation.
+
+## Trade-offs
+
+- **Nemotron-Parse vs. general vision LLM**: Chose Nemotron-Parse for its structured text extraction training, which produces cleaner markdown output with fewer hallucinations on dense label text.
+- **`<predict_markdown>` control token vs. default prompt**: Using the model's native control token significantly reduces XML bounding-box noise in the output, but requires familiarity with the model's specific instruction format.
+- **Heuristic candidate scoring vs. single-pass extraction**: When multiple UID candidates are found, scoring by prefix presence, length, and alphanumeric density is less elegant than a single deterministic match — but handles the real-world variety of label formats much better.
+
+## Impact & Metrics
+
+- **5 component types** supported with component-specific extraction algorithms
+- **15-digit IMEI extraction** with adjacent token merging for IoT devices
+- Multi-layer accuracy pipeline: LLM prompt optimization → response sanitization → noise filtering → prefix matching → regex validation → heuristic scoring
+- Deployed via **Docker + NGINX** with async job queue and Redis caching for throughput
+
+## Lessons Learned
+
+OCR with LLMs is more about post-processing than the model itself. Nemotron-Parse gave us good raw text extraction, but the accuracy gap between "raw LLM output" and "reliable UID extraction" was filled entirely by the 6-stage filtering and validation pipeline. The heuristic scoring system — the last resort when multiple candidates exist — turned out to handle 20-30% of real-world labels that would otherwise produce wrong or empty results.

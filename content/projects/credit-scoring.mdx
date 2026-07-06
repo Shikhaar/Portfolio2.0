@@ -1,0 +1,71 @@
+---
+id: "credit-scoring"
+title: "Zybil / Hustle Score"
+subtitle: "AI Credit Scoring Engine for India's Gig Economy"
+category: ["LLMs", "Backend"]
+tags: ["Python", "FastAPI", "MySQL", "MongoDB", "Redis", "Pandas", "AWS Rekognition"]
+featured: true
+recruiterHighlight: true
+order: 4
+color: "#922B21"
+diagram: "credit-scoring"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Score Range"
+    value: "300-900 (5 tiers)"
+  - label: "Scoring Dimensions"
+    value: "7 (Tenure, Wallet, Trust, etc.)"
+  - label: "Cities"
+    value: "15+ with cohort isolation"
+  - label: "Default Rate"
+    value: "0.0%"
+outcome: "Automated loan eligibility decisions for 25,000+ active riders with zero default rates."
+---
+
+## Problem
+
+Over 90% of gig delivery riders in India are unbanked or have thin credit files, making them invisible to traditional credit bureaus. EV fleet operators like Zypp faced high collection defaults, rapid rider churn, and vehicle abuse — all driven by an inability to assess rider financial reliability before or during onboarding.
+
+## Business Context
+
+Zypp Electric possesses proprietary data streams that traditional lenders cannot access: continuous ride telemetry, closed-loop wallet transaction history, multi-merchant payout records, and biometric KYC data. The opportunity was to build a credit scoring engine that converts this operational data into a standardized 300–900 score — enabling data-driven decisions on security deposits, vehicle upgrades, RTO programs, and third-party lending partnerships.
+
+## Architecture
+
+The system operates as a **dual-mode engine**: a daily batch pipeline scores the entire active fleet, while an on-demand FastAPI endpoint generates individual scores in seconds. The batch pipeline runs a `ChronosBatchPredictor` equivalent — parallel feature collection across MySQL (rides, payouts, wallets, tickets) and MongoDB (IoT telemetry) — computing percentile-ranked scores per city cohort. Results are delta-synced to an analytics MySQL database and cached in Redis for fast API lookups.
+
+The 7-dimension scoring model combines tenure (25%), wallet health (20%), penalty resiliency (15%), operational performance (15%), stability (10–15%), trust/KYC (10%), and rent behavior (5–10%). IoT telemetry (harsh braking, overspeeding) is blended into the Trust dimension at 20% weight. City cohort isolation ensures riders are benchmarked within their own operational market — a Tier-2 Jaipur rider isn't compared against Delhi volumes.
+
+## Tech Stack
+
+- **Data Sources**: MySQL (rides, payouts, wallets, tickets), MongoDB (IoT telemetry)
+- **Processing**: Python (Pandas, NumPy), Parquet files for percentile recalculation
+- **API**: FastAPI with Redis caching (multi-tier: 5-min paginated, 1-hour parquet)
+- **Identity**: AWS Rekognition (face selfie audit, anti-sharing verification)
+- **Persistence**: MySQL analytics DB with delta sync updates
+
+## Challenges
+
+- **Geographical fairness**: Rider volumes vary 10x between Mumbai and Jaipur. Without city cohort isolation, Tier-2 riders would score disproportionately low simply due to market size.
+- **Multi-merchant aggregation**: A rider active on Zomato for 300 days and Blinkit for 5 days needs their performance combined fairly. Implemented tenure-weighted averaging.
+- **IoT safety data sparsity**: Not all vehicles have IoT devices. The trust score needed graceful fallback when telemetry was absent.
+- **Delta sync at scale**: Rewriting the entire fleet's scores daily was too expensive. Implemented a delta pipeline that only updates Active↔Inactive state changes and modified scores.
+
+## Trade-offs
+
+- **Fixed rule-based dimensions vs. ML regression**: Chose fixed weighted dimensions initially for interpretability and compliance reasons. ML weight tuning planned once sufficient historical default/churn data is available.
+- **Percentile ranking vs. absolute scoring**: City-relative percentiles ensure geographical fairness but mean a rider's score can change without their behavior changing, if city-wide fleet composition shifts.
+
+## Impact & Metrics
+
+- **300–900 score** across 5 tiers (Red → Diamond) deployed for fleet management decisions
+- **7 scoring dimensions** including IoT telemetry integration
+- Serves **15+ cities** with cohort-isolated percentile benchmarks
+- Open API surface enables **third-party lending integrations** for micro-loans and credit products
+- Redis cache strategy achieves **< 1s lookup** for pre-computed scores
+
+## Lessons Learned
+
+Credit scoring for gig workers is fundamentally a fairness problem before it's a technical problem. The city cohort isolation and tenure weighting decisions were driven by ethics, not just accuracy. The most powerful insight was that wallet health (positive balance days, daily volatility) was more predictive of future defaults than ride volume — counter-intuitive but validated by collection team data.

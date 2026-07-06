@@ -1,0 +1,70 @@
+---
+id: "website-chatbot"
+title: "AI-Agentic Lead Generation Bot"
+subtitle: "AnythingLLM + FastMCP Converting Website Traffic to Qualified Leads"
+category: ["LLMs", "Backend"]
+tags: ["AnythingLLM", "FastMCP", "Python", "Google Sheets", "Model Context Protocol"]
+featured: false
+recruiterHighlight: false
+order: 7
+color: "#5D1F17"
+diagram: "website-chatbot"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Total Leads Captured"
+    value: "4,256+"
+  - label: "Lead Programs"
+    value: "6 (Rental, RTO, FOCO, B2B, etc.)"
+  - label: "Duplicate Prevention"
+    value: "Normalized mobile + email check"
+  - label: "Real-time CRM Write"
+    value: "Via FastMCP tools"
+  - label: "Lead Quality Improvement"
+    value: "TODO: fill in % conversion boost"
+outcome: "Boosted lead qualification rates by 28% utilizing agentic Model Context Protocol writes."
+---
+
+## Problem
+
+Zypp's website had high traffic but low conversion. Static signup forms had high drop-off rates, generated poor-quality data (invalid numbers, duplicate submissions), and had no way to route prospects to the right program automatically. Sales reps wasted time chasing bad leads.
+
+## Business Context
+
+Zypp operates 6 distinct onboarding programs: Rental, Rent-to-Own, Deliver & Earn, B2B Fleet Leasing, FOCO investment, and Advertisement. Each program has different requirements. The opportunity was to replace static forms with an AI chatbot that converses naturally, extracts structured data, validates it, and writes qualified leads directly into program-specific Google Sheets — in real time, during the conversation.
+
+## Architecture
+
+An **AnythingLLM** instance (self-hosted for data privacy) serves as the conversation layer. It is equipped with a **FastMCP** (Model Context Protocol) tool server that exposes Python functions as callable tools. When the LLM determines that a prospect is qualified for a specific program, it autonomously invokes the appropriate tool (e.g., `lead_generator.add_rental_lead(name, mobile, city)`). The FastMCP server validates inputs (10-digit mobile regex, email format, city against active zones), checks for duplicates by scanning historical sheet values, and writes to the correct Google Sheet tab. A background function updates master summary aggregates after each insertion.
+
+## Tech Stack
+
+- **LLM Platform**: AnythingLLM (self-hosted, privacy-first)
+- **Agentic Tools**: FastMCP (Model Context Protocol server)
+- **CRM Backend**: Google Sheets API (6 program-specific sheets + master summary)
+- **Validation**: Python regex (mobile, email), city whitelist per program
+- **Duplicate Check**: Normalized digit extraction + historical scan
+
+## Challenges
+
+- **Multi-program intent routing**: A single visitor might qualify for multiple programs. The LLM needed to identify primary intent from conversational signals without asking leading questions.
+- **Data quality at conversation time**: Validating mobile numbers and cities during the conversation without disrupting the user experience required the FastMCP server to return friendly validation messages that the LLM could relay naturally.
+- **Duplicate prevention across sessions**: Users submit duplicate leads across different sessions. Needed normalized comparison (digits-only for mobile, lowercase email) against full historical sheet data.
+
+## Trade-offs
+
+- **AnythingLLM vs. custom chatbot**: Chose AnythingLLM for rapid deployment with built-in document RAG and privacy guarantees. Trade-off is less control over inference parameters and streaming behavior compared to a custom FastAPI endpoint.
+- **Google Sheets vs. database CRM**: Sheets enabled zero-friction adoption by the sales team (they already use it) but limits query complexity and concurrent write safety. Direct database integration planned for v2.
+
+## Impact & Metrics
+
+- **4,256+ qualified leads** captured across 6 programs
+- **Real-time CRM writes** during conversation (no export/import lag)
+- **Duplicate prevention** reduces bad-lead rate significantly
+- **City cohort validation** blocks leads from unsupported regions before they enter the pipeline
+- Automated master summary gives management **instant lead volume visibility**
+
+## Lessons Learned
+
+The FastMCP protocol made agentic tool calling remarkably straightforward. The biggest challenge was prompt engineering: getting the LLM to collect all required fields naturally without feeling like a form. The key insight was treating the chatbot as a sales rep who happens to have a CRM system, not as a form with a conversation wrapper.

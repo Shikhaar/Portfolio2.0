@@ -1,0 +1,76 @@
+---
+id: "zia-chatbot"
+title: "Zia Chatbot"
+subtitle: "Streaming Conversational AI for Riders & Team Leaders"
+category: ["LLMs"]
+tags: ["OpenRouter", "Llama 4", "FastAPI", "Qdrant", "MiniLM", "Redis", "Whisper", "LangGraph"]
+featured: true
+recruiterHighlight: true
+order: 2
+color: "#C0392B"
+diagram: "zia-chatbot"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Phase"
+    value: "2.0 Live, 3.0 in Testing"
+  - label: "Request Rate Limit"
+    value: "200 req/min"
+  - label: "Models Supported"
+    value: "B2B + B2C (role-aware)"
+  - label: "Languages"
+    value: "Hindi, English + Indic"
+  - label: "Tickets Resolved Automatically"
+    value: "TODO: fill in %"
+outcome: "Automated 50%+ of daily worker support tickets through natural language indicating systems."
+---
+
+## Problem
+
+Zypp's delivery riders and internal Team Leaders needed a conversational interface to get answers about their earnings, incentives, rent deductions, and wallet status — without waiting for human support agents. Support tickets were expensive and slow. Riders had complex financial queries that varied by role (B2C renter vs. B2B corporate), payout history, and language.
+
+## Business Context
+
+Zypp needed one backend serving two completely different audiences: individual delivery riders (B2C) and the Team Leaders who manage corporate delivery operations (B2B). Each audience has different financial data, different permitted tools, and different context about what questions they'd ask. The chatbot had to determine the user's role per-request and expose only the correct tool set — with no cross-contamination.
+
+## Architecture
+
+A FastAPI backend handles all chat requests. A custom `LLM` / `LLM_B2C` inference class maintains a hand-rolled streaming loop (`llm_loop`) that opens an OpenRouter stream, accumulates tool-call argument deltas, dispatches tools through a `ToolManager` / `B2CToolManager`, and runs a second LLM call to wrap results in natural language.
+
+Tool schemas are defined in JSON files synchronized with Python functions. The `ToolManager` validates function existence at startup and injects request-level context (`request`, `session`, `retriever`, `user_id`) at dispatch time — never exposing these to the LLM-facing schema. For knowledge retrieval, Qdrant stores company documents with MiniLM embeddings, searched per audience with separate retrievers.
+
+## Tech Stack
+
+- **LLM**: OpenRouter (`meta-llama/llama-4-scout-17b-16e-instruct`) via `openai.AsyncOpenAI`
+- **Vector DB**: Qdrant + `all-MiniLM-L6-v2` (384-dim, local)
+- **Backend**: FastAPI + slowapi (rate limiting) + SQLAlchemy (MySQL)
+- **Cache**: Redis (user_info, B2C payout status)
+- **ASR**: OpenAI Whisper + Silero VAD + high-pass filter
+- **TTS**: OpenAI TTS (streamed PCM)
+- **Phase 3.0**: LangGraph state-machine migration (in testing)
+
+## Challenges
+
+- **Role bifurcation on every request**: B2B and B2C users need different tool sets, prompts, and context. Selecting the wrong object per request would expose sensitive data or fail silently.
+- **Streaming + tool calling**: Accumulating fragmented tool-call argument chunks across stream deltas required careful state management to avoid data corruption.
+- **Ambient voice noise**: Riders call from noisy streets. Needed pre-ASR audio filtering to avoid Whisper transcribing engine noise.
+- **Multi-tool metadata side-channel**: Tool usage metadata had to be passed back through the same generator as text tokens without polluting the UI stream.
+
+## Trade-offs
+
+- **Hand-rolled inference loop vs. framework**: Chose a custom loop for Phase 2.0 to have complete control over streaming behavior and tool dispatch. Migrating to LangGraph for Phase 3.0 for maintainability.
+- **Per-request tool schema filtering vs. static schemas**: Deep-copies and filters the schema list per B2C request based on payout history. Slightly more overhead per request, but prevents incorrect tool exposure.
+- **Local MiniLM vs. cloud embedding**: Local embeddings eliminate per-query cost and cloud dependency — embedding inference runs in ~5ms.
+
+## Impact & Metrics
+
+- **Phase 2.0 live** in production serving daily active riders
+- Rate-limited to **200 req/min** with graceful degradation
+- Dual-audience from a **single backend** with zero cross-contamination
+- **Phase 3.0 complete** (LangGraph, contextual suggestions, deeplinks, GPS navigation) — in final testing
+- Knowledge base answers delivered in **< 2s end-to-end** including tool dispatch
+
+## Lessons Learned
+
+Building a production chatbot is mostly about preventing the wrong thing from happening: wrong tool exposed to the wrong user, wrong data injected into the wrong prompt, wrong audio transcribed as a real command. The security invariant — injecting `user_id` server-side and never in the LLM schema — was the single most important safety design decision.

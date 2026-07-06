@@ -1,0 +1,82 @@
+{
+  "domains": [
+    {
+      "id": "voice-ai",
+      "label": "Voice AI & Audio",
+      "icon": "Mic",
+      "color": "#E7473C",
+      "skills": [
+        { "name": "Pipecat", "tier": "Expert" },
+        { "name": "LiveKit (WebRTC)", "tier": "Expert" },
+        { "name": "OpenAI Realtime API", "tier": "Expert" },
+        { "name": "OpenAI Whisper (ASR)", "tier": "Proficient" },
+        { "name": "OpenAI TTS", "tier": "Proficient" },
+        { "name": "Silero VAD", "tier": "Proficient" }
+      ],
+      "projects": ["voice-ai", "zia-chatbot"]
+    },
+    {
+      "id": "computer-vision",
+      "label": "Computer Vision",
+      "icon": "Eye",
+      "color": "#C0392B",
+      "skills": [
+        { "name": "GPT-4o Vision API", "tier": "Expert" },
+        { "name": "AWS Rekognition", "tier": "Proficient" },
+        { "name": "MediaPipe", "tier": "Proficient" },
+        { "name": "Nvidia Nemotron-Parse", "tier": "Proficient" },
+        { "name": "OpenCV / PIL", "tier": "Proficient" },
+        { "name": "PaddleOCR", "tier": "Familiar" }
+      ],
+      "projects": ["ai-vehicle-validation", "blacklisting", "ocr-system"]
+    },
+    {
+      "id": "llms-agents",
+      "label": "LLMs & Agentic AI",
+      "icon": "Brain",
+      "color": "#A93226",
+      "skills": [
+        { "name": "OpenRouter", "tier": "Expert" },
+        { "name": "Llama 4 Scout", "tier": "Proficient" },
+        { "name": "Vercel AI SDK", "tier": "Proficient" },
+        { "name": "AnythingLLM", "tier": "Proficient" },
+        { "name": "FastMCP", "tier": "Proficient" },
+        { "name": "LangChain / LangGraph", "tier": "Proficient" },
+        { "name": "Qdrant", "tier": "Proficient" },
+        { "name": "MiniLM / Harrier-OSS", "tier": "Proficient" }
+      ],
+      "projects": ["zia-chatbot", "voice-ai", "website-chatbot"]
+    },
+    {
+      "id": "time-series",
+      "label": "Time Series & ML",
+      "icon": "TrendingUp",
+      "color": "#922B21",
+      "skills": [
+        { "name": "Amazon Chronos-2", "tier": "Expert" },
+        { "name": "TSB / SBA (Statistical)", "tier": "Proficient" },
+        { "name": "Python (NumPy, Pandas)", "tier": "Expert" },
+        { "name": "Scikit-learn", "tier": "Proficient" },
+        { "name": "Plotly", "tier": "Proficient" }
+      ],
+      "projects": ["spare-parts-forecaster", "credit-scoring"]
+    },
+    {
+      "id": "backend-systems",
+      "label": "Backend & Systems",
+      "icon": "Server",
+      "color": "#7B241C",
+      "skills": [
+        { "name": "FastAPI", "tier": "Expert" },
+        { "name": "Python (Async)", "tier": "Expert" },
+        { "name": "MySQL / SQLAlchemy", "tier": "Expert" },
+        { "name": "Redis", "tier": "Proficient" },
+        { "name": "Docker / NGINX", "tier": "Proficient" },
+        { "name": "AWS S3", "tier": "Proficient" },
+        { "name": "APScheduler / ARQ", "tier": "Proficient" }
+      ],
+      "projects": ["voice-ai", "zia-chatbot", "ai-vehicle-validation", "ocr-system", "blacklisting", "spare-parts-forecaster", "credit-scoring", "website-chatbot"]
+    }
+  ]
+}
+

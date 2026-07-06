@@ -1,0 +1,23 @@
+[
+  {
+    "institution": "Bennett University",
+    "degree": "B.Tech in Computer Science and Engineering",
+    "period": "Sept 2022 - June 2026",
+    "grade": "CGPA: 8.46/10.0",
+    "description": "Focused on computer science core, software systems, and artificial intelligence. Built the technical foundation for applied AI and backend engineering."
+  },
+  {
+    "institution": "Delhi Public School (DPS)",
+    "degree": "Intermediate Education (Class XII)",
+    "period": "",
+    "grade": "Percentage: 87.2%",
+    "description": "Completed Senior Secondary Education with a focus on Physics, Chemistry, Mathematics, and Computer Science."
+  },
+  {
+    "institution": "Delhi Public School (DPS)",
+    "degree": "Secondary Schooling (Class X)",
+    "period": "",
+    "grade": "Percentage: 92.2%",
+    "description": "Completed high school with distinction."
+  }
+]
