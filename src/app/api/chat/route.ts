@@ -52,14 +52,38 @@ function mockStreamResponse(question: string): Response {
   const lower = question.toLowerCase();
   let response = "";
 
-  if (lower.includes("voice") || lower.includes("saathi") || lower.includes("pipecat")) {
-    response = "Zypp Saathi is a real-time multilingual voice assistant I built with Pipecat + OpenAI Realtime API + LiveKit WebRTC. It serves 25,000+ active delivery riders across Delhi-NCR, Bengaluru, and Mumbai, handling earnings queries, navigation help, and support ticket creation — all over voice, in Hindi and regional languages. The trickiest part was building ambient noise filters and barge-in shields to prevent mid-query corruption.";
+  if (lower.includes("yourself") || lower.includes("who is") || lower.includes("background") || lower.includes("about shikhar")) {
+    response = "I am Shikhar Srivastava, an AI/ML Engineer at Zypp Electric specializing in building production-grade agentic systems, real-time voice pipelines, and high-throughput async backends. I graduated in B.Tech CSE from Bennett University and focus on shipping robust AI systems that run at scale.";
+  } else if (lower.includes("building") || lower.includes("these days") || (lower.includes("current") && lower.includes("project"))) {
+    response = "These days, I am focused on migrating our production conversational agent runtimes to LangGraph state machines for multi-step resolution workflows, and exploring FastMCP tool-server orchestration. I am also tuning Chronos-2 foundation models for time-series forecasting.";
+  } else if (lower.includes("problem") || lower.includes("enjoy") || lower.includes("solve") || lower.includes("solving")) {
+    response = "I enjoy solving problems at the intersection of AI models and backend infrastructure. This includes designing voice activity detection (VAD) rules for noisy environments, parallelizing vision processing chains, and building low-latency databases for real-time agents.";
+  } else if (lower.includes("learning") || lower.includes("learn right now")) {
+    response = "Right now, I am studying time-series foundation model tuning for zero-shot demand forecasting, and building custom Model Context Protocol (MCP) servers to allow agents to interact securely with internal databases and services.";
+  } else if (lower.includes("favorite") || lower.includes("favourite") || lower.includes("strongest") || lower.includes("impactful") || lower.includes("best")) {
+    response = "My favorite project is Zypp Saathi, our real-time multilingual voice assistant. Deflecting 40%+ of support tickets for 25,000+ EV riders in noisy environments required building custom noise filtering and barge-in logic, which was an incredible engineering challenge.";
+  } else if (lower.includes("noise") || lower.includes("ambient")) {
+    response = "Zypp Saathi handles ambient road noise by implementing optimized voice-activity-detection (VAD) thresholds and barge-in filters inside our Pipecat + LiveKit WebRTC pipeline. We also tuned the audio silence sensitivity for noisy Indian street environments, deflecting 40%+ of daily support calls.";
+  } else if (lower.includes("hustle") || lower.includes("zybil") || lower.includes("credit")) {
+    response = "The Hustle Score (Zybil) credit engine maps EV IoT telemetry, wallet health, and multi-merchant gig statistics into a 300–900 scale. Built using async FastAPI, it completely automates underwriting for gig worker micro-loans with a 0% default rate to date.";
+  } else if (lower.includes("damage") || lower.includes("vision") || lower.includes("vehicle") || lower.includes("gpt-4o")) {
+    response = "The vehicle damage validation pipeline processes 4-sided photo checks in parallel using GPT-4o Vision. It runs during ride-ends to verify structural vehicle integrity, saving over 100 manual operations hours daily.";
+  } else if (lower.includes("langgraph") || lower.includes("zia") || lower.includes("rag") || lower.includes("agentic")) {
+    response = "Zia Chatbot (Phase 3.0) uses LangGraph state machines paired with Qdrant Vector DB for semantic retrieval. By managing multi-step ticket resolution workflows, it resolves 50%+ of daily driver support queries automatically.";
+  } else if (lower.includes("models") || lower.includes("chronos") || lower.includes("nemotron")) {
+    response = "In production, I run a diverse model suite: Amazon Chronos-2 for demand forecasting, Nvidia Nemotron-Parse-1.1 for component OCR, AWS Rekognition/MediaPipe for driver face verification, and Gemini-2.5-Flash/GPT-4o for voice and chat agents.";
+  } else if (lower.includes("cost") || lower.includes("rate") || lower.includes("latency") || lower.includes("limit")) {
+    response = "To manage LLM costs and latency, I implement semantic prompt caching, context size minimization, parallel API execution, and local lightweight fallback rules. This approach keeps Zia/Saathi response times sub-second and cuts API costs by 30%.";
+  } else if (lower.includes("voice") || lower.includes("saathi") || lower.includes("pipecat")) {
+    response = "Zypp Saathi is a real-time multilingual voice assistant built with Pipecat + OpenAI Realtime API + LiveKit WebRTC. It handles earnings, navigation, and support queries in Hindi and regional languages for 25,000+ active riders.";
   } else if (lower.includes("strongest") || lower.includes("impactful") || lower.includes("best")) {
     response = "My Zypp Saathi Voice AI and Zia Chatbot are the most impactful — both are live in production serving over 25,000 active riders. The credit scoring engine (Zybil/Hustle Score) is arguably the most technically ambitious, where I built a proprietary 300–900 gig-worker credit score from EV telemetry, wallet health, and multi-merchant performance data across 15+ cities.";
-  } else if (lower.includes("recruit") || lower.includes("hire") || lower.includes("fit")) {
+  } else if (lower.includes("summarize") || lower.includes("profile") || lower.includes("one minute") || lower.includes("career")) {
+    response = "I am an AI/ML Engineer with a B.Tech in CSE from Bennett University (8.46 CGPA). At Zypp Electric, I built and shipped 8 production AI systems serving 25k+ daily active riders—including Zypp Saathi (Pipecat/LiveKit Voice AI), Zia Chatbot (LangGraph/Qdrant RAG), vehicle damage vision pipelines, and credit scoring engines. I specialize in async Python backend codebases, agentic systems, and time-series model tuning.";
+  } else if (lower.includes("recruit") || lower.includes("hire") || lower.includes("fit") || lower.includes("role") || lower.includes("looking for") || lower.includes("why should") || lower.includes("strong ai")) {
     response = "I am a strong fit for AI/ML Engineer, ML Engineer, or Senior Backend Engineer roles at companies building production AI products. I bring 2+ years of end-to-end production AI experience — from LLM integration and voice pipelines to computer vision and time-series forecasting — all shipped at scale to real users.";
-  } else if (lower.includes("backend") || lower.includes("fastapi") || lower.includes("redis")) {
-    response = "My core backend stack is Python + FastAPI (async) + SQLAlchemy + MySQL + Redis across all systems. Redis is used for session management in the voice assistant, user_info caching in the chatbot, and end-of-day TTL caching for forecast results. All services are deployed via Docker + NGINX.";
+  } else if (lower.includes("backend") || lower.includes("fastapi") || lower.includes("redis") || lower.includes("stack") || lower.includes("tech") || lower.includes("technology") || lower.includes("framework") || lower.includes("database") || lower.includes("tool")) {
+    response = "My core tech stack consists of Python, FastAPI (async), SQLAlchemy, MySQL, and Redis on the backend; Next.js 16, TypeScript, Framer Motion, and Vanilla CSS on the frontend. For AI and engineering, I specialize in Pipecat, LiveKit WebRTC, Qdrant, LangGraph, AWS Rekognition, and Model Context Protocol (FastMCP).";
   } else if (lower.includes("graduate") || lower.includes("graduation") || lower.includes("college") || lower.includes("degree") || lower.includes("bennett") || lower.includes("study") || lower.includes("studied") || lower.includes("school") || lower.includes("educat")) {
     response = "I graduated in June 2026 with a B.Tech in Computer Science and Engineering from Bennett University, achieving a CGPA of 8.46/10.0. I completed my schooling from Delhi Public School (DPS).";
   } else if (lower.includes("age") || lower.includes("old") || lower.includes("born") || lower.includes("birth")) {

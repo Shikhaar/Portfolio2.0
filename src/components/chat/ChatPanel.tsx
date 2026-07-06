@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MessageCircle, X, Send, Loader2, ChevronDown,
-  Briefcase, Sparkles, Brain, Code2, Users, RotateCcw
+  Briefcase, Sparkles, Brain, Code2, Users, RotateCcw,
+  Mic, TrendingUp, Eye, Server, Clock, GraduationCap, Mail, MapPin
 } from "lucide-react";
 
 interface Message {
@@ -14,19 +15,21 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-  { icon: <Brain size={14} />, text: "Show your most impactful project" },
-  { icon: <Sparkles size={14} />, text: "What did you learn building Voice AI?" },
-  { icon: <Code2 size={14} />, text: "Explain your architecture choices" },
-  { icon: <Users size={14} />, text: "Why should I hire you?" },
-  { icon: <Briefcase size={14} />, text: "Have you worked in production AI?" },
+  { icon: <Users size={14} />, text: "Tell me about yourself." },
+  { icon: <Briefcase size={14} />, text: "What are you building these days?" },
+  { icon: <Brain size={14} />, text: "What kind of problems do you enjoy solving?" },
+  { icon: <Sparkles size={14} />, text: "What's your favorite project?" },
+  { icon: <GraduationCap size={14} />, text: "What are you learning right now?" },
+  { icon: <Mail size={14} />, text: "How can I get in touch?" },
 ];
 
 const RECRUITER_SUGGESTIONS = [
-  { icon: <Brain size={14} />, text: "Summarize your background in 60 seconds" },
-  { icon: <Sparkles size={14} />, text: "What is your strongest project?" },
-  { icon: <Code2 size={14} />, text: "Have you worked in production AI?" },
-  { icon: <Users size={14} />, text: "What backend technologies have you used?" },
-  { icon: <Briefcase size={14} />, text: "Why are you a good fit for an AI Engineer role?" },
+  { icon: <Briefcase size={14} />, text: "Give me a quick overview of your experience." },
+  { icon: <Users size={14} />, text: "What kind of roles are you looking for?" },
+  { icon: <Sparkles size={14} />, text: "What makes you a strong AI Engineer?" },
+  { icon: <TrendingUp size={14} />, text: "Walk me through your career." },
+  { icon: <Brain size={14} />, text: "Summarize your profile in one minute." },
+  { icon: <Code2 size={14} />, text: "Why should I hire you?" },
 ];
 
 export function ChatPanel() {
