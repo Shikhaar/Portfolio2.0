@@ -13,6 +13,19 @@ interface Diagram {
 }
 
 const DIAGRAMS: Record<string, Diagram> = {
+  "testpilot-ai": {
+    layout: "vertical",
+    steps: [
+      { label: "GitHub Webhook → PR Ingest" },
+      { label: "Tree-sitter AST Parsing (Diff & Symbols)" },
+      { label: "Dependency Mapping & Impact Tracing" },
+      { label: "Qdrant Vector Search (Codebase Retrieval)" },
+      { label: "Isolated Pytest Sandbox Execution" },
+      { label: "Generative Test Writing (Gemini 2.0 Flash)" },
+      { label: "Failure Analysis & Cause Pinpointing" },
+      { label: "PR Comment Review & Metrics Output" },
+    ],
+  },
   "voice-ai": {
     layout: "vertical",
     steps: [

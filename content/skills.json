@@ -45,7 +45,7 @@
         { "name": "Qdrant", "tier": "Proficient" },
         { "name": "MiniLM / Harrier-OSS", "tier": "Proficient" }
       ],
-      "projects": ["zia-chatbot", "voice-ai", "website-chatbot"]
+      "projects": ["zia-chatbot", "voice-ai", "website-chatbot", "testpilot-ai"]
     },
     {
       "id": "time-series",
@@ -75,7 +75,7 @@
         { "name": "AWS S3", "tier": "Proficient" },
         { "name": "APScheduler / ARQ", "tier": "Proficient" }
       ],
-      "projects": ["voice-ai", "zia-chatbot", "ai-vehicle-validation", "ocr-system", "blacklisting", "spare-parts-forecaster", "credit-scoring", "website-chatbot"]
+      "projects": ["voice-ai", "zia-chatbot", "ai-vehicle-validation", "ocr-system", "blacklisting", "spare-parts-forecaster", "credit-scoring", "website-chatbot", "testpilot-ai"]
     }
   ]
 }

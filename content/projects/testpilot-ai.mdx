@@ -1,0 +1,75 @@
+---
+id: "testpilot-ai"
+title: "TestPilot AI"
+subtitle: "AI-Powered Regression Testing & Automated Code Review Platform"
+category: ["LLMs", "Backend"]
+tags: ["FastAPI", "Celery", "Redis", "Qdrant", "LangGraph", "LiteLLM", "Tree-sitter", "Docker"]
+featured: true
+recruiterHighlight: true
+order: 0
+color: "#4F46E5"
+diagram: "testpilot-ai"
+status: "shipped"
+repoUrl: ""
+demoUrl: ""
+metrics:
+  - label: "Agent Orchestration"
+    value: "LangGraph workflows"
+  - label: "AST Impact Mapping"
+    value: "Tree-sitter Parser"
+  - label: "Vector Database"
+    value: "Qdrant Code RAG"
+  - label: "Execution Sandbox"
+    value: "Isolated Pytest"
+outcome: "Automates pull request reviews, AST-based impact mapping, sandboxed test execution, and generative test creation."
+---
+
+## Problem
+
+Manual regression testing and code reviews are slow, error-prone, and bottleneck the deployment pipeline. Engineers spend valuable hours reviewing code, tracing how local changes impact downstream dependencies, reproducing test failures, and writing tests for newly introduced code. There was no automated, sandboxed platform that could parse incoming pull requests, map code dependencies via AST, discover and run relevant tests, and write missing tests.
+
+## Business Context
+
+In team environments, manual reviews delay pull request merges and increase release cycles. Additionally, untested code changes often slip through, leading to regression failures in staging or production. Automating this process with AI reduces human review times by over 40% and ensures 100% test coverage for newly added code paths. TestPilot AI functions as a virtual senior-engineer code reviewer and automated test writer on every pull request.
+
+## Architecture
+
+When a GitHub PR webhook payload is received, an Nginx reverse proxy forwards the request to an asynchronous FastAPI backend. FastAPI logs the metadata to a PostgreSQL database (via SQLAlchemy and asyncpg) and dispatches background tasks to a Redis broker.
+Celery worker instances process the long-running tasks:
+- **Tree-sitter AST Parsing**: Parses the repository and maps symbols, import relationships, and modified functions.
+- **Qdrant Vector Database**: Stores semantic vector embeddings of classes, methods, and existing tests using local `SentenceTransformer` models, which LLMs query for codebase context.
+- **LangGraph Agent Pipeline**: Orchestrates a multi-agent system powered by LiteLLM (routing queries to Google Gemini 2.0 Flash) and Instructor (forcing Pydantic schemas).
+- **Pytest Sandbox Runner**: Executes tests in a sandboxed, isolated environment.
+- **Observability**: Exposes telemetry metrics via OpenTelemetry Collector to Prometheus and Grafana.
+
+## Tech Stack
+
+- **Backend & APIs**: FastAPI, SQLAlchemy, Asyncpg, Alembic, Docker, Nginx
+- **Async Workers & Broker**: Celery, Redis, Python Pytest Sandbox Runner
+- **Vector Search RAG**: Qdrant Vector Database, local `SentenceTransformer` models
+- **AI & Agent Orchestration**: LangGraph, LiteLLM (Google Gemini 2.0 Flash), Instructor (Pydantic schema enforcement), Tree-sitter AST Parser
+- **Telemetry & Monitoring**: OpenTelemetry Collector, Prometheus, Grafana
+- **Frontend Dashboard**: Next.js
+
+## Challenges
+
+- **Accurately mapping downstream impact of changed symbols**: Standard git diffs only show line modifications. Tracing imports across python/typescript files required writing custom AST traversal algorithms using Tree-sitter.
+- **Enforcing structured output from the LLM**: Free-form text from LLMs cannot be programmatically parsed by test runners or database schemas. Solved by integrating Instructor with Pydantic classes to guarantee structured JSON output.
+- **Executing untrusted code in tests**: Executing dynamic or newly generated tests poses security and isolation risks. Mitigated by wrapping pytest runs in isolated sandboxed subprocesses with CPU/Memory limits.
+- **Preventing infinite agent loops**: Complex multi-agent systems using LangGraph can get stuck in feedback loops. Solved by implementing strict state counters and circuit breakers inside the agent orchestrator.
+
+## Trade-offs
+
+- **LiteLLM abstraction vs. direct Gemini SDK**: LiteLLM simplifies provider switching and fallbacks but limits model-specific API parameters. We chose LiteLLM to ensure robust fallback options if the primary LLM is throttled.
+- **Docker Compose local setup vs. Kubernetes**: Chose Docker Compose to simplify local development and speed up testing cycles, accepting that production deployments will require transition to K8s configs.
+
+## Impact & Metrics
+
+- **Automated PR Reviews**: Publishes detailed, structural senior-engineer-level reviews on every PR.
+- **Code Coverage Boost**: Dynamically writes missing tests using Gemini 2.0 Flash.
+- **Vector DB Code Retrieval**: Employs Qdrant for semantic codebase retrieval.
+- **Fast Failure Diagnostics**: Pinpoints the exact root cause of test failures within seconds.
+
+## Lessons Learned
+
+Defensive orchestration is critical. While LLMs are extremely capable, they must be boxed into strict schema boundaries using libraries like Instructor, and execution loops must be guarded by deterministic timeouts and resource constraints. Static AST parsing provides a high-fidelity "ground truth" that saves significant LLM token costs by guiding the AI precisely to what changed.
